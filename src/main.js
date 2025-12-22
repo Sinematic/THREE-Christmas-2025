@@ -62,7 +62,7 @@ gltfLoader.setDRACOLoader(dracoLoader)
 let mixer = null
 
 gltfLoader.load(
-    '../public/models/scene.glb',
+    '/models/scene.glb',
     (gltf) =>
     {
         scene.add(gltf.scene)
@@ -70,22 +70,15 @@ gltfLoader.load(
 )
 
 // Player
-// =======================
-// PLAYER + CAMERA (FPS)
-// =======================
 
 const player = new THREE.Object3D()
 player.position.set(25, 6.7, 19) // hauteur des yeux
 scene.add(player)
 
-// la caméra devient les yeux du joueur
 camera.position.set(0, 0, 0)
 player.add(camera)
 
-// =======================
-// ROTATION (LOOK)
-// =======================
-
+// Rotation (Look)
 let yaw = 0
 let pitch = 0
 
@@ -95,11 +88,8 @@ const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
 yaw = yaw % (Math.PI * 2) 
-// =======================
-// JOYSTICKS
-// =======================
 
-// joystick déplacement
+// Joysticks
 let moveInput = { x: 0, y: 0 }
 
 const joystickMove = nipplejs.create({
@@ -141,20 +131,15 @@ joystickLook.on('end', () => {
   pitchDelta = 0
 })
 
-// =======================
 // Movement
-// =======================
-
 const speed = 0.01
 const forward = new THREE.Vector3()
 const right = new THREE.Vector3()
 
 const updateMovement = () => {
-  // appliquer rotations
   player.rotation.y = yaw
   camera.rotation.x = pitch
 
-  // direction avant/arrière
   forward.set(0, 0, -1).applyQuaternion(player.quaternion)
   player.position.addScaledVector(forward, moveInput.y * speed)
 
