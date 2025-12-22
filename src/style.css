@@ -17,3 +17,19 @@ body
     left: 0;
     outline: none;
 }
+
+.joystick {
+    position: fixed;
+    width: 150px;
+    height: 150px;
+    bottom: 20px;
+    z-index: 99999;
+}
+
+#joystick-move {
+    left: 20px;
+}
+
+#joystick-look {
+    right: 20px;
+}
