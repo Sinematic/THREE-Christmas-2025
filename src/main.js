@@ -83,7 +83,7 @@ let yaw = 0
 let pitch = 0
 
 const maxPitch = Math.PI / 2.5
-const lookSpeed = 0.002
+const lookSpeed = 0.015
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -132,7 +132,7 @@ joystickLook.on('end', () => {
 })
 
 // Movement
-const speed = 0.01
+const speed = 0.03
 const forward = new THREE.Vector3()
 const right = new THREE.Vector3()
 
@@ -143,10 +143,16 @@ const updateMovement = () => {
   forward.set(0, 0, -1).applyQuaternion(player.quaternion)
   player.position.addScaledVector(forward, moveInput.y * speed)
 
-  // déplacement latéral
   right.set(1, 0, 0).applyQuaternion(player.quaternion)
   player.position.addScaledVector(right, moveInput.x * speed)
 }
+
+// Hitboxes
+const walls = []
+
+scene.traverse((obj) => {
+  if(obj.isMesh && obj.userData.isWall) walls.push(obj)
+})
 
 
 // Lights
