@@ -1,0 +1,34 @@
+{
+    "gettingStarted": {
+        "loaded" : "GUIDE : Il fait drôlement sombre... Attends je vais arranger ça !",
+        "guide" : [
+            "GUIDE : Bonjour ? Tu m'écoutes ? HÉ HO, PAR LÀ DUCON !", 
+            "GUIDE : Ah ! Bonjour cher visiteur, ravi de te voir !",
+            "GUIDE : On va pouvoir commencer. Bienvenue au village du Père Noël",
+            "GUIDE : Tu connais sûrement les lapins crétins, eh bien ici, tu verras que le problème vient des pingouins",
+            "GUIDE : Non pas moi, eux je dois me les coltiner toute l'année !",
+            "GUIDE : Enfin bref, tu vois sûrement deux cercles blancs, à gauche et à droite.",
+            "GUIDE : Si tu déplaces le cercle à gauche, tu vas retrouver l'usage de tes jambes",
+            "GUIDE : Si tu déplaces le cercle à droite, tu devrais pouvoir tourner la tête",
+            "GUIDE : Bon, maintenant que c'est fait, je dois y aller, le devoir m'appelle !"
+        ]
+    },
+    "dialogs": {
+        "snowman" : "Les bonhommes de neige normaux ils ont droit à une carotte, pourquoi moi j'ai un nez poireau ?",
+        "gnomes" : {
+            "cousinsGnomes" : [ 
+                "CANDILUTIN : Hmm, elles sont bonnes ces dragées, c'est quoi ?", 
+                "CAMILUTIN : Mais Candilutin, t'es dégueu, tu manges les crottes du renne !"
+            ],
+            "grannyGnome" : "MÉMÉLUTIN : Quels emmerdeurs ces pingouins, mais bon, le pingouin ça se mange sans faim !",
+            "parensGnomes" : [
+                "",
+                ""
+            ]
+        },
+        "pengwins" : {
+            "roof" : "On dirait qu'un pingouin a chuté dans la poubelle",
+            "singers" : "Jingle Bells, Jingle Bells ... c'est quoi après déjà ?"
+        }
+    }
+}

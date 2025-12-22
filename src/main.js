@@ -1,13 +1,23 @@
 import * as THREE from "three"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import GUI from 'lil-gui'
 import nipplejs from 'nipplejs'
+import dialogs from "/public/data/dialogs.json"
 
 // Window
 const canvas = document.querySelector('canvas.webgl')
 
+const text = dialogs
+let textDiv = document.getElementById("dialogs")
+console.log(text)
+
+const saySentence = (text) => {
+    textDiv.innerText = text
+	setTimeout(() => { textDiv.innerText = "" }, 5000)
+}
+saySentence(text.gettingStarted.loaded)
 
 // Scene
 const scene = new THREE.Scene()
@@ -36,12 +46,6 @@ window.addEventListener('resize', () =>
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 
-// Controls
-/*
-const controls = new OrbitControls(camera, canvas)
-controls.target.set(0, 1, 0)
-controls.enableDamping = true
-*/
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true, canvas })
@@ -70,20 +74,18 @@ gltfLoader.load(
 )
 
 // Player
-
 const player = new THREE.Object3D()
-player.position.set(25, 6.7, 19) // hauteur des yeux
+player.position.set(24, 6.7, 19)
 scene.add(player)
 
 camera.position.set(0, 0, 0)
 player.add(camera)
 
-// Rotation (Look)
-let yaw = 0
+let yaw = Math.PI / 2 
 let pitch = 0
 
 const maxPitch = Math.PI / 2.5
-const lookSpeed = 0.015
+const lookSpeed = 0.0015
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -99,7 +101,6 @@ const joystickMove = nipplejs.create({
     color: 'white'
 })
 
-
 joystickMove.on('move', (evt, data) => {
     moveInput.x = data.vector.x
     moveInput.y = data.vector.y
@@ -110,7 +111,7 @@ joystickMove.on('end', () => {
     moveInput.y = 0
 })
 
-// joystick caméra
+
 const joystickLook = nipplejs.create({
   zone: document.getElementById('joystick-look'),
   mode: 'static',
@@ -132,34 +133,67 @@ joystickLook.on('end', () => {
 })
 
 // Movement
-const speed = 0.03
+const speed = 0.006
 const forward = new THREE.Vector3()
 const right = new THREE.Vector3()
 
 const updateMovement = () => {
-  player.rotation.y = yaw
-  camera.rotation.x = pitch
+  const prevPosition = player.position.clone()
 
   forward.set(0, 0, -1).applyQuaternion(player.quaternion)
-  player.position.addScaledVector(forward, moveInput.y * speed)
-
   right.set(1, 0, 0).applyQuaternion(player.quaternion)
-  player.position.addScaledVector(right, moveInput.x * speed)
+
+  const moveX = right.clone().multiplyScalar(moveInput.x * speed)
+  const moveZ = forward.clone().multiplyScalar(moveInput.y * speed)
+
+  const desiredMove = new THREE.Vector3().add(moveX).add(moveZ)
+
+  // Test Z
+  if (!isInsideAllowedZone(new THREE.Vector2(
+    prevPosition.x,
+    prevPosition.z + desiredMove.z
+  ))) {
+    desiredMove.z = 0
+  }
+
+  // Test X
+  if (!isInsideAllowedZone(new THREE.Vector2(
+    prevPosition.x + desiredMove.x,
+    prevPosition.z
+  ))) {
+    desiredMove.x = 0
+  }
+
+  player.position.add(desiredMove)
 }
 
+
 // Hitboxes
-const walls = []
+const playerRadius = 0.5
+const getPlayer2D = () => new THREE.Vector2(player.position.x, player.position.z) 
 
-scene.traverse((obj) => {
-  if(obj.isMesh && obj.userData.isWall) walls.push(obj)
-})
+const allowedZones = [
+  // branche gauche du U
+  { xMin: -15, xMax: 27.7, zMin: 10, zMax: 22.5 },
+  // fond du U
+  { xMin: -22, xMax: -12, zMin: -16, zMax: 17 },
+  // branche droite du U
+  { xMin: -15, xMax: 8, zMin: -27, zMax: -10 },
+]
 
+const isInsideAllowedZone = (pos) => {
+	return allowedZones.some(zone =>
+		pos.x > zone.xMin &&
+		pos.x < zone.xMax &&
+		pos.y > zone.zMin &&
+		pos.y < zone.zMax
+	)
+}
 
 // Lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
 scene.add(ambientLight)
-scene.add(new THREE.DirectionalLight(0xffffff, 1));
-
+/*
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8)
 directionalLight.castShadow = true
 directionalLight.shadow.mapSize.set(1024, 1024)
@@ -170,7 +204,7 @@ directionalLight.shadow.camera.right = 7
 directionalLight.shadow.camera.bottom = - 7
 directionalLight.position.set(5, 5, 5)
 scene.add(directionalLight)
-
+*/
 
 // Animation function
 const clock = new THREE.Clock()
@@ -185,7 +219,6 @@ const tick = () =>
     if(mixer) mixer.update(deltaTime)
 
     // Update controls
-    //controls.update()
 
     yaw += yawDelta
     pitch += pitchDelta
@@ -193,8 +226,9 @@ const tick = () =>
 
     player.rotation.y = yaw
     camera.rotation.x = pitch
-    updateMovement()
 
+    updateMovement()
+	console.log(player.position.x, player.position.z)
 
     // Render
     renderer.render(scene, camera)
@@ -209,6 +243,20 @@ tick()
 const gui = new GUI()
 
 const cameraTweaks = gui.addFolder('Caméra')
-cameraTweaks.add(camera.position, 'x').min(-25).max(25).step(0.1).name('X Position')
-cameraTweaks.add(camera.position, 'y').min(-1).max(10).step(0.1).name('Y Position')
-cameraTweaks.add(camera.position, 'z').min(-25).max(25).step(0.1).name('Z Position')
+cameraTweaks.add(camera.position, 'x').min(-60).max(60).step(0.1).name('X Position')
+cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Position')
+
+
+const lightTweaks = gui.addFolder('Lumières')
+lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
+
+/*
+lightTweaks.add(directionalLight, 'intensity').min(0).max(10).step(0.01).name('Lumière dirigée')
+lightTweaks.add(directionalLight.position, 'x').min(0).max(15).step(0.1).name('X')
+lightTweaks.add(directionalLight.position, 'y').min(0).max(15).step(0.1).name('Y')
+lightTweaks.add(directionalLight.position, 'z').min(0).max(15).step(0.1).name('Z')
+*/
+
+
+
+//gui.hide()

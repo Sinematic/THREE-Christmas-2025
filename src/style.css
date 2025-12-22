@@ -8,6 +8,7 @@ html,
 body
 {
     overflow: hidden;
+    font-family: "Open Sans", sans-serif !important;
 }
 
 .webgl
@@ -32,4 +33,18 @@ body
 
 #joystick-look {
     right: 20px;
+}
+
+#dialogs {
+    width: 80%;
+    position: absolute;
+    bottom: 6vh;
+    z-index: 999999;
+    background-color: transparent;
+    left: 50%;
+    transform: translate(-50%);
+    color: white;
+    font-size: 20px;
+    text-align: center;
+    user-select: none;
 }
