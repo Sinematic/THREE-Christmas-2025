@@ -85,7 +85,7 @@ let yaw = Math.PI / 2
 let pitch = 0
 
 const maxPitch = Math.PI / 2.5
-const lookSpeed = 0.015
+const lookSpeed =  0.005//0.025 //0.015
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -169,8 +169,6 @@ const updateMovement = () => {
 
 
 // Hitboxes
-const playerRadius = 0.5
-const getPlayer2D = () => new THREE.Vector2(player.position.x, player.position.z) 
 
 const allowedZones = [
   // branche gauche du U
@@ -193,7 +191,7 @@ const isInsideAllowedZone = (pos) => {
 // Lights
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
 scene.add(ambientLight)
-/*
+
 const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8)
 directionalLight.castShadow = true
 directionalLight.shadow.mapSize.set(1024, 1024)
@@ -204,7 +202,19 @@ directionalLight.shadow.camera.right = 7
 directionalLight.shadow.camera.bottom = - 7
 directionalLight.position.set(5, 5, 5)
 scene.add(directionalLight)
-*/
+
+const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
+scene.add(directionalLightHelper)
+
+
+const pointLight = new THREE.PointLight("ffffff", 0.5)
+scene.add(pointLight)
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
+scene.add(pointLightHelper)
+
+scene.fog = new THREE.FogExp2(0x0b1d2a, 0.06)
+
+
 
 // Animation function
 const clock = new THREE.Clock()
@@ -228,7 +238,7 @@ const tick = () =>
     camera.rotation.x = pitch
 
     updateMovement()
-	console.log(player.position.x, player.position.z)
+	//console.log(player.position.x, player.position.z)
 
     // Render
     renderer.render(scene, camera)
