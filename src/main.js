@@ -231,43 +231,51 @@ const skybox = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), materials)
 scene.add(skybox)
 
 // Snow
-const count = 1000
-const snowGeometry = new THREE.BufferGeometry()
-const positions = []
-
-for (let i = 0; i < count; i++) {
-  const x = (Math.random() - 0.5) * 100
-  const y = Math.random() * 40
-  const z = (Math.random() - 0.5) * 100
-  positions.push(x, y, z)
-}
-
-snowGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
-
-// Material des particules
-const snowMaterial = new THREE.PointsMaterial({
-  color: 0xffffff,
-  size: 0.2,
-  transparent: true,
-  opacity: 0.8,
-  roundPoints: true
-})
 
 // Points
-const snow = new THREE.Points(snowGeometry, snowMaterial)
-scene.add(snow)
+// Nombre de flocons
+const count = 1000;
+const snowGeometry = new THREE.BufferGeometry();
+const positions = [];
+const offsetsX = [];
+const offsetsZ = [];
 
+for (let i = 0; i < count; i++) {
+  positions.push(
+    (Math.random() - 0.5) * 80,  // x
+    Math.random() * 40,           // y
+    (Math.random() - 0.5) * 80   // z
+  );
+  offsetsX.push(Math.random() * Math.PI * 2);
+  offsetsZ.push(Math.random() * Math.PI * 2);
+}
+
+snowGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+
+const snowMaterial = new THREE.PointsMaterial({
+  color: 0xffffff,
+  size: 0.3,
+  transparent: true,
+  sizeAttenuation: true,
+});
+
+const snow = new THREE.Points(snowGeometry, snowMaterial);
+scene.add(snow);
+
+// --- Animation ---
 const animateSnow = () => {
-	const positions = snowGeometry.attributes.position.array
+	const pos = snowGeometry.attributes.position.array;
+	const t = performance.now() * 0.001; // temps global qui varie à chaque frame
 
-	for (let i = 1; i < positions.length; i += 3) {
-		positions[i] -= 0.02 + Math.random() * 0.02
-		positions[i-2] += Math.sin(Date.now() * 0.001 + i) * 0.01
-		positions[i-0] += Math.cos(Date.now() * 0.001 + i) * 0.01
-		
-		if (positions[i] < 0) positions[i] = 40
+	for (let i = 1, j = 0; i < pos.length; i += 3, j++) {
+		pos[i] -= 0.02 + Math.random() * 0.02;               // chute verticale
+		pos[i-2] += Math.sin(t + offsetsX[j]) * 0.01;       // oscillation X
+		pos[i-0] += Math.cos(t + offsetsZ[j]) * 0.01;       // oscillation Z
+
+		if (pos[i] < 0) pos[i] = 40;                        // remise en haut
 	}
-	snowGeometry.attributes.position.needsUpdate = true
+
+	snowGeometry.attributes.position.needsUpdate = true;
 }
 
 
