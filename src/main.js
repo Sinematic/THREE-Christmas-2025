@@ -1,17 +1,16 @@
 import * as THREE from "three"
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import GUI from 'lil-gui'
 import nipplejs from 'nipplejs'
 import dialogs from "/public/data/dialogs.json"
 
+
 // Window
 const canvas = document.querySelector('canvas.webgl')
 
 const text = dialogs
 let textDiv = document.getElementById("dialogs")
-console.log(text)
 
 const saySentence = (text) => {
     textDiv.innerText = text
@@ -31,13 +30,10 @@ const sizes = {
 
 window.addEventListener('resize', () =>
 {
-    // Update sizes
     sizes.width = window.innerWidth
     sizes.height = window.innerHeight
-    // Update camera
     camera.aspect = sizes.width / sizes.height
     camera.updateProjectionMatrix()
-    // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
@@ -67,11 +63,9 @@ let mixer = null
 
 gltfLoader.load(
     '/models/scene.glb',
-    (gltf) =>
-    {
-        scene.add(gltf.scene)
-    }
+    (gltf) => scene.add(gltf.scene)
 )
+
 
 // Player
 const player = new THREE.Object3D()
@@ -85,7 +79,7 @@ let yaw = Math.PI / 2
 let pitch = 0
 
 const maxPitch = Math.PI / 2.5
-const lookSpeed =  0.005//0.025 //0.015
+const lookSpeed =  0.015//0.025 //0.015
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -169,13 +163,9 @@ const updateMovement = () => {
 
 
 // Hitboxes
-
 const allowedZones = [
-  // branche gauche du U
   { xMin: -15, xMax: 27.7, zMin: 10, zMax: 22.5 },
-  // fond du U
   { xMin: -22, xMax: -12, zMin: -16, zMax: 17 },
-  // branche droite du U
   { xMin: -15, xMax: 8, zMin: -27, zMax: -10 },
 ]
 
@@ -188,32 +178,97 @@ const isInsideAllowedZone = (pos) => {
 	)
 }
 
+
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.6)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
 scene.add(ambientLight)
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8)
-directionalLight.castShadow = true
-directionalLight.shadow.mapSize.set(1024, 1024)
-directionalLight.shadow.camera.far = 15
-directionalLight.shadow.camera.left = - 7
-directionalLight.shadow.camera.top = 7
-directionalLight.shadow.camera.right = 7
-directionalLight.shadow.camera.bottom = - 7
-directionalLight.position.set(5, 5, 5)
-scene.add(directionalLight)
-
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 0.2)
-scene.add(directionalLightHelper)
-
-
-const pointLight = new THREE.PointLight("ffffff", 0.5)
+const pointLight = new THREE.PointLight("red", 2, 1.8, Math.PI * 0.1, 0.25, 1)
+pointLight.position.set(3.55, 12.2, 6.4)
 scene.add(pointLight)
+/*
 const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
 scene.add(pointLightHelper)
+*/
+const addLampLight = (x, y, z) => {
+	const pointLight = new THREE.PointLight(0xebab34, 4.5, 12, Math.PI * 0.1, 0.25, 1)
+	pointLight.position.set(x, y, z)
+	scene.add(pointLight)
+}
 
-scene.fog = new THREE.FogExp2(0x0b1d2a, 0.06)
+const lampsPositions = [
+	{ x: -0.15, y: 9.7, z: 21.8 },
+	{ x: -24.57, y: 10.82, z: 18.2 },
+	{ x: 18.2, y: 9.7, z: 5.8 },
+	{ x: -9.7, y: 9.7, z: 3.7 },
+	{ x: -0.4, y: 9.7, z: -9.4 },
+	{ x: -6.1, y: 10.4, z: -24.5 },
+	{ x: 12.7, y: 10.4, z: -24.7 },
+	{ x: -24.5, y: 10.6, z: -16.4 },
+]
 
+for(let lamp of lampsPositions) addLampLight(lamp.x, lamp.y, lamp.z)
+
+scene.fog = new THREE.FogExp2(0x0b1d2a, 0.02)
+//scene.background = new THREE.Color(0x0b1d2a)
+
+
+
+// Sky
+const loader = new THREE.TextureLoader()
+const texture = loader.load('/images/night-sky.jpg')
+
+const materials = [
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+]
+
+const skybox = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), materials)
+scene.add(skybox)
+
+// Snow
+const count = 1000
+const snowGeometry = new THREE.BufferGeometry()
+const positions = []
+
+for (let i = 0; i < count; i++) {
+  const x = (Math.random() - 0.5) * 100
+  const y = Math.random() * 40
+  const z = (Math.random() - 0.5) * 100
+  positions.push(x, y, z)
+}
+
+snowGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3))
+
+// Material des particules
+const snowMaterial = new THREE.PointsMaterial({
+  color: 0xffffff,
+  size: 0.2,
+  transparent: true,
+  opacity: 0.8,
+  roundPoints: true
+})
+
+// Points
+const snow = new THREE.Points(snowGeometry, snowMaterial)
+scene.add(snow)
+
+const animateSnow = () => {
+	const positions = snowGeometry.attributes.position.array
+
+	for (let i = 1; i < positions.length; i += 3) {
+		positions[i] -= 0.02 + Math.random() * 0.02
+		positions[i-2] += Math.sin(Date.now() * 0.001 + i) * 0.01
+		positions[i-0] += Math.cos(Date.now() * 0.001 + i) * 0.01
+		
+		if (positions[i] < 0) positions[i] = 40
+	}
+	snowGeometry.attributes.position.needsUpdate = true
+}
 
 
 // Animation function
@@ -228,8 +283,6 @@ const tick = () =>
 
     if(mixer) mixer.update(deltaTime)
 
-    // Update controls
-
     yaw += yawDelta
     pitch += pitchDelta
     pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -238,16 +291,14 @@ const tick = () =>
     camera.rotation.x = pitch
 
     updateMovement()
-	//console.log(player.position.x, player.position.z)
-
-    // Render
+	animateSnow()
     renderer.render(scene, camera)
 
-    // Call tick again on the next frame
     window.requestAnimationFrame(tick)
 }
 
 tick()
+
 
 // GUI
 const gui = new GUI()
@@ -259,14 +310,30 @@ cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Positi
 
 const lightTweaks = gui.addFolder('Lumières')
 lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
+lightTweaks.add(pointLight, 'intensity').min(0).max(10).step(0.01).name('Lumière Lampadaire')
 
-/*
-lightTweaks.add(directionalLight, 'intensity').min(0).max(10).step(0.01).name('Lumière dirigée')
-lightTweaks.add(directionalLight.position, 'x').min(0).max(15).step(0.1).name('X')
-lightTweaks.add(directionalLight.position, 'y').min(0).max(15).step(0.1).name('Y')
-lightTweaks.add(directionalLight.position, 'z').min(0).max(15).step(0.1).name('Z')
-*/
+lightTweaks.add(pointLight.position, 'x').min(-30).max(30).step(0.001).name('x')
+lightTweaks.add(pointLight.position, 'y').min(-30).max(30).step(0.001).name('y')
+lightTweaks.add(pointLight.position, 'z').min(-30).max(30).step(0.001).name('z')
+
+gui.hide()
 
 
+// PWA Full-Screen
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('Service Worker registered', reg))
+      .catch(err => console.error('SW registration failed', err))
+  })
+}
 
-//gui.hide()
+function goFullScreen() {
+	if (document.body.requestFullscreen) document.body.requestFullscreen()
+	else if (document.body.webkitRequestFullscreen) document.body.webkitRequestFullscreen()
+	else if (document.body.msRequestFullscreen) document.body.msRequestFullscreen()
+}
+
+canvas.addEventListener('click', () => {
+  	goFullScreen()
+})
