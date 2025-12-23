@@ -79,7 +79,7 @@ let yaw = Math.PI / 2
 let pitch = 0
 
 const maxPitch = Math.PI / 2.5
-const lookSpeed =  0.005//0.025 //0.015
+const lookSpeed =  0.015
 const clamp = (val, min, max) => Math.max(min, Math.min(max, val))
 
 pitch = clamp(pitch, -maxPitch, maxPitch)
@@ -127,7 +127,7 @@ joystickLook.on('end', () => {
 })
 
 // Movement
-const speed = 0.015
+const speed = 0.03
 const forward = new THREE.Vector3()
 const right = new THREE.Vector3()
 
