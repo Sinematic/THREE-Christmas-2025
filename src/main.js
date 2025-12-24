@@ -371,12 +371,13 @@ const saySentence = (text) => {
   let i = 0
 
   const showLine = () => {
+
     if (i >= lines.length) {
-      textDiv.innerText = ""
-      joystickToHideMove.style.opacity = 1
-      joystickToHideLook.style.opacity = 1
-      playingDialogs = false
-      return
+		textDiv.innerText = ""
+		joystickToHideMove.style.opacity = 1
+		joystickToHideLook.style.opacity = 1
+		playingDialogs = false
+		return
     }
 
 	ambientLight.intensity = Math.min(
@@ -398,7 +399,7 @@ saySentence(text.guide)
 
 
 
-setTimeout(() => { scene.remove(pingwinGuide) }, 55000)
+setTimeout(() => { scene.remove(pingwinGuide) }, 60000)
 
 
 // Detection for dialogs
