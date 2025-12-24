@@ -66,6 +66,17 @@ gltfLoader.load(
 )
 
 gltfLoader.load(
+    '/models/pingwin-guide.glb',
+    (gltf) => {
+		const pingwinGuide = gltf.scene
+		pingwinGuide.position.set(22, 4.3, 19)
+		pingwinGuide.scale.set(0.7, 0.7, 0.7)
+		pingwinGuide.rotateY(4.7)
+		scene.add(pingwinGuide)
+	}
+)
+
+gltfLoader.load(
     '/models/ugly_gnome_max.glb',
     (gltf) =>  {
 		gnomeModel = gltf.scene
@@ -78,7 +89,7 @@ gltfLoader.load(
 		const meGnome = gnomeModel.clone()
 		meGnome.position.set(-9, 4.3, -1.2)
 		meGnome.rotateY(3)
-		
+
 		const candiGnome = gnomeModel.clone()
 		candiGnome.position.set(-23, 4.3, -3.9)
 
@@ -347,29 +358,37 @@ const animateSnow = () => {
 let playingDialogs = false
 
 const saySentence = (text) => {
-    textDiv.innerText = text
-	joystickToHide.style.opacity = 0
+  playingDialogs = true
+  joystickToHide.style.opacity = 0
 
-	setTimeout(() => { 
-		textDiv.innerText = ""
-		playingDialogs = false 
-		joystickToHide.style.opacity = 1
-	}, 5000)
+  // On transforme tout en tableau pour simplifier
+  const lines = Array.isArray(text) ? text : [text]
+  let i = 0
+
+  const showLine = () => {
+    if (i >= lines.length) {
+      textDiv.innerText = ""
+      joystickToHide.style.opacity = 1
+      playingDialogs = false
+      return
+    }
+
+    textDiv.innerText = lines[i]
+    i++
+
+    setTimeout(showLine, 5000)
+  }
+
+  showLine()
 }
 
-saySentence(text.gettingStarted.loaded)
+
+saySentence(text.guide)
 
 
 // Detection for dialogs
 const hasPlayedScene = {
-	init: {
-		positions: { x: 5.66, y: 14, z: 2.7},
-		status:false
-	},	
-	guide: {
-		positions: { x: 5.66, y: 14, z: 2.7},
-		status:false
-	},
+	guide: { status:false },	
 	roofPengwins: {
 		positions: { x: 5.66, y: 14, z: 2.7},
 		status:false
@@ -430,40 +449,37 @@ const hasPlayedScene = {
 	starrySky: { status:false }
 }
 
-const directionalLight = new THREE.DirectionalLight("yellow", 1)
-directionalLight.position.set(0, 15, 0)
-scene.add(directionalLight)
-const directionalLightHelping = new THREE.DirectionalLightHelper(directionalLight)
-scene.add(directionalLightHelping) 
+const dialogueThresholdDist = 5
+const dialogueThresholdAngle = 0.8
+
 
 const checkDialogs = () => {
-	const dirToTarget = new THREE.Vector3();
-	const cameraDir = new THREE.Vector3();
-/*
-	for (const d of dialogs) {
-		const dx = player.position.x - d.position.x;
-		const dz = player.position.z - d.position.z;
+	const camPos = player.position
+	const camDir = new THREE.Vector3()
+	camera.getWorldDirection(camDir)
 
-		if (dx * dx + dz * dz > d.radius * d.radius) continue;
+	Object.keys(hasPlayedScene).forEach(key => {
+		const sceneItem = hasPlayedScene[key]
 
-		dirToTarget
-		.subVectors(d.position, camera.position)
-		.normalize();
+		if (sceneItem.status || !sceneItem.positions) return
 
-		camera.getWorldDirection(cameraDir);
+			const targetPos = new THREE.Vector3(
+				sceneItem.positions.x,
+				sceneItem.positions.y,
+				sceneItem.positions.z
+			)
 
-		if (cameraDir.angleTo(dirToTarget) < d.maxAngle) {
-			saySentence(d);
-			return;
+			const distance = camPos.distanceTo(targetPos)
+			const toTarget = new THREE.Vector3().subVectors(targetPos, camPos).normalize()
+			const angleDot = camDir.dot(toTarget)
+
+			if (distance < dialogueThresholdDist && angleDot > dialogueThresholdAngle) {
+				saySentence(text[key])
+				sceneItem.status = true
 		}
-  	}
-		*/
-
+	})
 }
 
-/*
-
-*/
 
 // Animation function
 const clock = new THREE.Clock()
