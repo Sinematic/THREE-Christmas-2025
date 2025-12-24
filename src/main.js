@@ -244,12 +244,20 @@ const isInsideAllowedZone = (pos) => {
 const ambientLight = new THREE.AmbientLight(0xffffff, 0)
 scene.add(ambientLight)
 
+const lightForPengwinInTrash = new THREE.SpotLight(0xffffff, 5, 7, Math.PI / 4, 0.2)
+lightForPengwinInTrash.position.set(1, 9.5, 3.9)
+scene.add(lightForPengwinInTrash)
+
+lightForPengwinInTrash.target.position.set(1, 6, 3)
+scene.add(lightForPengwinInTrash.target)
+
+
 const startIntensity = 0
 const targetIntensity = 0.3
 const duration = 20000
 const startTime = performance.now()
 
-function updateAmbientLight() {
+const updateAmbientLight = () => {
   const elapsed = performance.now() - startTime
   const t = Math.min(elapsed / duration, 1)
 
@@ -557,7 +565,7 @@ tick()
 
 
 // GUI
-
+/*
 const gui = new GUI()
 /*
 const cameraTweaks = gui.addFolder('Caméra')
@@ -593,14 +601,3 @@ function goFullScreen() {
 canvas.addEventListener('click', () => {
   	goFullScreen()
 })
-
-const newLight = new THREE.SpotLight(0xffffff, 5, 7, Math.PI / 4, 0.2)
-newLight.position.set(1, 9.5, 3.9)
-scene.add(newLight)
-
-newLight.target.position.set(1, 6, 3)
-scene.add(newLight.target)
-
-gui.add(newLight.position, 'x').min(-10).max(10).step(0.1).name('x')
-gui.add(newLight.position, 'y').min(-10).max(10).step(0.1).name('y')
-gui.add(newLight.position, 'z').min(-10).max(10).step(0.1).name('z')
