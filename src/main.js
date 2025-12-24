@@ -383,7 +383,9 @@ const saySentence = (text) => {
 }
 
 
-saySentence(text.guide)
+//saySentence(text.guide)
+
+const newLight = new THREE.SpotLight(0xffffff, 0.4)
 
 setTimeout(() => { scene.remove(pingwinGuide) }, 55000)
 
@@ -393,6 +395,12 @@ const hasPlayedScene = {
 	guide: { status:false },	
 	roofPengwins: {
 		positions: { x: 5.66, y: 14, z: 2.7},
+		distance: 15,
+		status:false
+	},	
+	trashPengwin: {
+		positions: { x: 5.66, y: 7, z: 2.7},
+		distance: 10,
 		status:false
 	},
 	snowman: {
@@ -405,6 +413,7 @@ const hasPlayedScene = {
 	},
 	christmasChoir: {
 		positions: { x: -18.6, y: 6.7, z: -17.9},
+		distance: 7,
 		status:false
 	},
 	sweaterPengwin: {
@@ -415,7 +424,7 @@ const hasPlayedScene = {
 		positions: { x: -23, y: 7.13, z: -3.9 },
 		status:false
 	},
-	auntAndUngleGnomes: {
+	auntAndUncleGnomes: {
 		positions: { x: -4, y: 5, z: -23 },
 		status:false
 	},
@@ -475,7 +484,10 @@ const checkDialogs = () => {
 			const toTarget = new THREE.Vector3().subVectors(targetPos, camPos).normalize()
 			const angleDot = camDir.dot(toTarget)
 
-			if (distance < dialogueThresholdDist && angleDot > dialogueThresholdAngle) {
+			let effectiveDistance = hasPlayedScene[key].distance ? hasPlayedScene[key].distance : dialogueThresholdDist
+
+			if (distance < effectiveDistance && angleDot > dialogueThresholdAngle) {
+				console.log(key)
 				saySentence(text[key])
 				sceneItem.status = true
 		}
