@@ -65,10 +65,12 @@ gltfLoader.load(
     (gltf) => scene.add(gltf.scene)
 )
 
+let pingwinGuide = null
+
 gltfLoader.load(
     '/models/pingwin-guide.glb',
     (gltf) => {
-		const pingwinGuide = gltf.scene
+		pingwinGuide = gltf.scene
 		pingwinGuide.position.set(22, 4.3, 19)
 		pingwinGuide.scale.set(0.7, 0.7, 0.7)
 		pingwinGuide.rotateY(4.7)
@@ -122,26 +124,7 @@ gltfLoader.load(
 		uncleGnome.rotateY(180)
 	
 		scene.add(sisterGnome, meGnome, girlfriendGnome, momGnome, dadGnome, grannyGnome, auntGnome, uncleGnome, candiGnome, camiGnome)
-				
-		gui.add(meGnome.rotation, 'y').min(0).max(360).step(1).name('angle max')
-		gui.add(candiGnome.rotation, 'y').min(0).max(360).step(1).name('angle candice')
-		gui.add(candiGnome.position, 'x').min(-30).max(360).step(0.01).name('x')
-		gui.add(candiGnome.position, 'z').min(-30).max(360).step(1).name('z')
-
-		/*
-		const sisterGnome = gnomeModel.clone()
-		sisterGnome.position.set(13, 4.3, 7.9)
-		sisterGnome.rotateY(180)
-		scene.add(sisterGnome)
-		
-		const sisterGnome = gnomeModel.clone()
-		sisterGnome.position.set(13, 4.3, 7.9)
-		sisterGnome.rotateY(180)
-		scene.add(sisterGnome)
-*/
-
 	}
-
 )
 
 
@@ -258,8 +241,21 @@ const isInsideAllowedZone = (pos) => {
 
 
 // Lights
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
+const ambientLight = new THREE.AmbientLight(0xffffff, 0)
 scene.add(ambientLight)
+
+const startIntensity = 0
+const targetIntensity = 0.3
+const duration = 20000
+const startTime = performance.now()
+
+function updateAmbientLight() {
+  const elapsed = performance.now() - startTime
+  const t = Math.min(elapsed / duration, 1)
+
+  ambientLight.intensity =
+    startIntensity + (targetIntensity - startIntensity) * t
+}
 
 const bluntLight = new THREE.SpotLight( "red", 4.2, 0.5, Math.PI / 6, 0.6)
 bluntLight.position.set(3.55, 12.2, 6.4)
@@ -344,13 +340,12 @@ const animateSnow = () => {
 	const t = performance.now() * 0.001
 
 	for (let i = 1, j = 0; i < pos.length; i += 3, j++) {
-		pos[i] -= 0.02 + Math.random() * 0.02               // chute verticale
-		pos[i-2] += Math.sin(t + offsetsX[j]) * 0.01       // oscillation X
-		pos[i-0] += Math.cos(t + offsetsZ[j]) * 0.01       // oscillation Z
+		pos[i] -= 0.02 + Math.random() * 0.02
+		pos[i-2] += Math.sin(t + offsetsX[j]) * 0.01
+		pos[i-0] += Math.cos(t + offsetsZ[j]) * 0.01
 
-		if (pos[i] < 0) pos[i] = 40;                        // remise en haut
+		if (pos[i] < 0) pos[i] = 40
 	}
-
 	snowGeometry.attributes.position.needsUpdate = true
 }
 
@@ -373,6 +368,11 @@ const saySentence = (text) => {
       return
     }
 
+	ambientLight.intensity = Math.min(
+		ambientLight.intensity + 0.0005,
+		0.2
+	);
+
     textDiv.innerText = lines[i]
     i++
 
@@ -384,6 +384,8 @@ const saySentence = (text) => {
 
 
 saySentence(text.guide)
+
+setTimeout(() => { scene.remove(pingwinGuide) }, 55000)
 
 
 // Detection for dialogs
@@ -492,6 +494,8 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
+	updateAmbientLight()
+
     if(mixer) mixer.update(deltaTime)
 
     yaw += yawDelta
@@ -541,24 +545,24 @@ tick()
 
 
 // GUI
+/*
 const gui = new GUI()
 
 const cameraTweaks = gui.addFolder('Caméra')
 cameraTweaks.add(camera.position, 'x').min(-60).max(60).step(0.1).name('X Position')
 cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Position')
 
-
 const lightTweaks = gui.addFolder('Lumières')
-//lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
+lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
 lightTweaks.add(directionalLight, 'intensity').min(0).max(10).step(0.01).name('Lumière Lampadaire')
 
 lightTweaks.add(directionalLight.position, 'x').min(-30).max(30).step(0.001).name('x')
 lightTweaks.add(directionalLight.position, 'y').min(-30).max(30).step(0.001).name('y')
 lightTweaks.add(directionalLight.position, 'z').min(-30).max(30).step(0.001).name('z')
 
+gui.hide()
 
-//gui.hide()
-
+*/
 
 // PWA Full-Screen
 if ('serviceWorker' in navigator) {
