@@ -72,8 +72,7 @@ gltfLoader.load(
 
 // Player
 const player = new THREE.Object3D()
-player.position.set(15, 5, 15)
-//player.position.set(24, 6.7, 19)
+player.position.set(24, 6.7, 19)
 scene.add(player)
 
 camera.position.set(0, 0, 0)
@@ -211,7 +210,7 @@ const lampsPositions = [
 	{ x: -24.5, y: 10.6, z: -16.4 },
 ]
 
-for(let lamp of lampsPositions) addLampLight(lamp.x, lamp.y, lamp.z)
+//for(let lamp of lampsPositions) addLampLight(lamp.x, lamp.y, lamp.z)
 
 scene.fog = new THREE.FogExp2(0x0b1d2a, 0.02)
 //scene.background = new THREE.Color(0x0b1d2a)
