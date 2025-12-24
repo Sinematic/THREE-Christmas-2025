@@ -186,16 +186,18 @@ const isInsideAllowedZone = (pos) => {
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
 scene.add(ambientLight)
 
-const pointLight = new THREE.PointLight("red", 2, 1.8, Math.PI * 0.1, 0.25, 1)
-pointLight.position.set(3.55, 12.2, 6.4)
-scene.add(pointLight)
-/*
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
-scene.add(pointLightHelper)
-*/
+const light = new THREE.SpotLight( "red", 4.2, 0.5, Math.PI / 6, 0.6)
+light.position.set(3.55, 12.2, 6.4)
+scene.add(light)
+
+light.target.position.set(3.55, 12.2, 5.7);
+scene.add(light.target)
+
 const addLampLight = (x, y, z) => {
 	const pointLight = new THREE.PointLight(0xebab34, 4.5, 9, Math.PI * 0.1, 0.25, 1)
 	pointLight.position.set(x, y, z)
+	pointLight.castShadow = false
+	pointLight.visible = camera.position.distanceTo(player.position) < 15;
 	scene.add(pointLight)
 }
 
@@ -219,12 +221,12 @@ const loader = new THREE.TextureLoader()
 const texture = loader.load('/images/night-sky.jpg')
 
 const materials = [
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
+	new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide }),
 ]
 
 const skybox = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), materials)
@@ -374,14 +376,14 @@ cameraTweaks.add(camera.position, 'x').min(-60).max(60).step(0.1).name('X Positi
 cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Position')
 
 
-const lightTweaks = gui.addFolder('Lumières')
+const lightTweaks = gui.addFolder('Lumières')/*
 lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
 lightTweaks.add(pointLight, 'intensity').min(0).max(10).step(0.01).name('Lumière Lampadaire')
 
 lightTweaks.add(pointLight.position, 'x').min(-30).max(30).step(0.001).name('x')
 lightTweaks.add(pointLight.position, 'y').min(-30).max(30).step(0.001).name('y')
 lightTweaks.add(pointLight.position, 'z').min(-30).max(30).step(0.001).name('z')
-
+*/
 //gui.hide()
 
 
