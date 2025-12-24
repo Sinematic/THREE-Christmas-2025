@@ -12,14 +12,8 @@ const canvas = document.querySelector('canvas.webgl')
 const text = dialogs
 let textDiv = document.getElementById("dialogs")
 
-const saySentence = (text) => {
-    textDiv.innerText = text
-	setTimeout(() => { 
-		textDiv.innerText = ""
-		playingDialogs = false 
-	}, 5000)
-}
-saySentence(text.gettingStarted.loaded)
+const joystickToHide = document.getElementById('joystick-move')
+
 
 // Scene
 const scene = new THREE.Scene()
@@ -64,10 +58,35 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
 let mixer = null
 
+let gnomeModel = null
+
 gltfLoader.load(
     '/models/scene.glb',
     (gltf) => scene.add(gltf.scene)
 )
+
+gltfLoader.load(
+    '/models/ugly_gnome_max.glb',
+    (gltf) =>  gnomeModel = gltf.scene
+)
+
+const gnomes = []
+
+if(gnomeModel) {
+	console.log(gnomeModel)
+for (let i = 0; i < 8; i++) {
+  const gnome = gnomeModel.clone();
+  gnome.position.set(
+    Math.random() * 10 - 5,  // x
+    0,                        // y
+    Math.random() * 10 - 5   // z
+  );
+  scene.add(gnome);
+  gnomes.push(gnome);
+}
+}
+
+
 
 
 // Player
@@ -238,9 +257,9 @@ scene.add(skybox)
 // Snow
 const count = 1000
 const snowGeometry = new THREE.BufferGeometry();
-const positions = [];
-const offsetsX = [];
-const offsetsZ = [];
+const positions = []
+const offsetsX = []
+const offsetsZ = []
 
 for (let i = 0; i < count; i++) {
   positions.push(
@@ -279,32 +298,98 @@ const animateSnow = () => {
 	snowGeometry.attributes.position.needsUpdate = true
 }
 
-
-// Detection for dialogs
+// Dialogs
 let playingDialogs = false
 
-const hasPlayedScene = {
-	init: false,
-	guide: false,
-	roofPengwins: false,
-	snowman: false,
-	drunkPengwin: false,
-	singerPengwins: false,
-	christmasChoir: false,
-	sweaterPengwin: false,
-	cousinsGnomes: false,
-	auntAndUngleGnomes: false,
-	grannyGnome: false,
-	parensGnomes: false,
-	meGnome: false,
-	girlfriendGnome: false,
-	sisterGnome: false,
-	happyNormalPengwin: false,
-	yakuzaPengwin: false,
-	noFeet: false,
-	starrySky: false,
-	suspiciousGift: false
+const saySentence = (text) => {
+    textDiv.innerText = text
+	joystickToHide.style.opacity = 0
+
+	setTimeout(() => { 
+		textDiv.innerText = ""
+		playingDialogs = false 
+		joystickToHide.style.opacity = 1
+	}, 5000)
 }
+
+saySentence(text.gettingStarted.loaded)
+
+
+// Detection for dialogs
+const hasPlayedScene = {
+	init: {
+		positions: { x: 5.66, y: 14, z: 2.7},
+		status:false
+	},	
+	guide: {
+		positions: { x: 5.66, y: 14, z: 2.7},
+		status:false
+	},
+	roofPengwins: {
+		positions: { x: 5.66, y: 14, z: 2.7},
+		status:false
+	},
+	snowman: {
+		positions: { x: -17.9, y: 6.7, z: 19.67},
+		status:false
+	},
+	drunkPengwin: {
+		positions: { x: -9, y: 5.7, z: -5.4},
+		status:false
+	},
+	christmasChoir: {
+		positions: { x: -18.6, y: 6.7, z: -17.9},
+		status:false
+	},
+	sweaterPengwin: {
+		positions: { x: 4.92, y: 5.7, z: -22.3},
+		status:false
+	},
+	cousinsGnomes: {
+		positions: { x: -23, y: 7.13, z: -3.9 },
+		status:false
+	},
+	auntAndUngleGnomes: {
+		positions: { x: -4, y: 5, z: -23 },
+		status:false
+	},
+	grannyGnome: {
+		positions: { x: 6.4, y: 5, z: -22.36 },
+		status:false
+	},
+	parentsGnomes: {
+		positions: { x: -7.6, y: 5, z: 23.5 },
+		status:false
+	},
+	meGnome: {
+		positions: { x: -9, y: 5, z: -0.23 },
+		status:false
+	},
+	girlfriendGnome: {
+		positions: { x: -24.5, y: 5.5, z: 17.4 },
+		status:false
+	},
+	sisterGnome: {
+		positions: { x: 13, y: 5, z: 7.9 },
+		status:false
+	},
+	yakuzaPengwin: {
+		positions: { x: 5.66, y: 8.6, z: -12 },
+		status:false
+	},
+	suspiciousGift: {
+		positions: { x: 10, y: 7, z: -9},
+		status:false
+	},
+	noFeet: { status:false },
+	starrySky: { status:false }
+}
+
+const directionalLight = new THREE.DirectionalLight("yellow", 1)
+directionalLight.position.set(0, 15, 0)
+scene.add(directionalLight)
+const directionalLightHelping = new THREE.DirectionalLightHelper(directionalLight)
+scene.add(directionalLightHelping) 
 
 const checkDialogs = () => {
 	const dirToTarget = new THREE.Vector3();
@@ -358,6 +443,30 @@ const tick = () =>
 	if(previousTime - lastCheck > 0.2) {
 		checkDialogs()
 		lastCheck = previousTime
+
+		const camDirection = new THREE.Vector3()
+		camera.getWorldDirection(camDirection)
+
+		if(!hasPlayedScene.starrySky.status) {
+
+			const starryDialog = new THREE.Vector3(0, 1, 0).normalize()
+			const threshold = 0.8
+			if((camDirection.dot(starryDialog) > threshold)) {
+				saySentence(text.easterEggs.starrySky)
+				hasPlayedScene.starrySky.status = true
+			}
+		}
+
+		if(!hasPlayedScene.noFeet.status) {
+
+			const noFeetDialog = new THREE.Vector3(0, -1, 0).normalize()
+			const threshold = 0.9
+			console.log((camDirection.dot(noFeetDialog) > threshold))
+			if((camDirection.dot(noFeetDialog) > threshold)) {
+				saySentence(text.easterEggs.noFeet)
+				hasPlayedScene.noFeet.status = true
+			}
+		}
 	}
 
     updateMovement()
@@ -378,14 +487,14 @@ cameraTweaks.add(camera.position, 'x').min(-60).max(60).step(0.1).name('X Positi
 cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Position')
 
 
-const lightTweaks = gui.addFolder('Lumières')/*
-lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
-lightTweaks.add(pointLight, 'intensity').min(0).max(10).step(0.01).name('Lumière Lampadaire')
+const lightTweaks = gui.addFolder('Lumières')
+//lightTweaks.add(ambientLight, 'intensity').min(0).max(10).step(0.01).name('Lumière ambiante')
+lightTweaks.add(directionalLight, 'intensity').min(0).max(10).step(0.01).name('Lumière Lampadaire')
 
-lightTweaks.add(pointLight.position, 'x').min(-30).max(30).step(0.001).name('x')
-lightTweaks.add(pointLight.position, 'y').min(-30).max(30).step(0.001).name('y')
-lightTweaks.add(pointLight.position, 'z').min(-30).max(30).step(0.001).name('z')
-*/
+lightTweaks.add(directionalLight.position, 'x').min(-30).max(30).step(0.001).name('x')
+lightTweaks.add(directionalLight.position, 'y').min(-30).max(30).step(0.001).name('y')
+lightTweaks.add(directionalLight.position, 'z').min(-30).max(30).step(0.001).name('z')
+
 //gui.hide()
 
 
