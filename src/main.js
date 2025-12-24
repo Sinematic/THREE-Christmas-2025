@@ -12,7 +12,8 @@ const canvas = document.querySelector('canvas.webgl')
 const text = dialogs
 let textDiv = document.getElementById("dialogs")
 
-const joystickToHide = document.getElementById('joystick-move')
+const joystickToHideMove = document.getElementById('joystick-move')
+const joystickToHideLook = document.getElementById('joystick-look')
 
 
 // Scene
@@ -362,7 +363,8 @@ let playingDialogs = false
 
 const saySentence = (text) => {
   playingDialogs = true
-  joystickToHide.style.opacity = 0
+  joystickToHideMove.style.opacity = 0
+  joystickToHideLook.style.opacity = 0
 
   // On transforme tout en tableau pour simplifier
   const lines = Array.isArray(text) ? text : [text]
@@ -371,7 +373,8 @@ const saySentence = (text) => {
   const showLine = () => {
     if (i >= lines.length) {
       textDiv.innerText = ""
-      joystickToHide.style.opacity = 1
+      joystickToHideMove.style.opacity = 1
+      joystickToHideLook.style.opacity = 1
       playingDialogs = false
       return
     }
