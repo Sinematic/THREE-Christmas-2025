@@ -193,12 +193,23 @@ scene.add(light)
 light.target.position.set(3.55, 12.2, 5.7);
 scene.add(light.target)
 
+// const addLampLight = (x, y, z) => {
+// 	const pointLight = new THREE.PointLight(0xebab34, 4.5, 9, Math.PI * 0.1, 0.25, 1)
+// 	pointLight.position.set(x, y, z)
+// 	pointLight.castShadow = false
+// 	pointLight.visible = camera.position.distanceTo(player.position) < 15;
+// 	scene.add(pointLight)
+// }
+
+new THREE.PointLight
+
 const addLampLight = (x, y, z) => {
-	const pointLight = new THREE.PointLight(0xebab34, 4.5, 9, Math.PI * 0.1, 0.25, 1)
-	pointLight.position.set(x, y, z)
-	pointLight.castShadow = false
-	pointLight.visible = camera.position.distanceTo(player.position) < 15;
-	scene.add(pointLight)
+	const spotLight = new THREE.SpotLight(0xebab34, 10, 12, Math.PI, 0.25, 1)
+	spotLight.position.set(x, y, z)
+	spotLight.castShadow = false
+	spotLight.target.position.set(x, y - 3, z)
+	//spotLight.visible = camera.position.distanceTo(player.position) < 15
+	scene.add(spotLight)
 }
 
 const lampsPositions = [
