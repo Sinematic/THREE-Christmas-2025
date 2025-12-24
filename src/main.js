@@ -253,8 +253,7 @@ function updateAmbientLight() {
   const elapsed = performance.now() - startTime
   const t = Math.min(elapsed / duration, 1)
 
-  ambientLight.intensity =
-    startIntensity + (targetIntensity - startIntensity) * t
+  ambientLight.intensity = startIntensity + (targetIntensity - startIntensity) * t
 }
 
 const bluntLight = new THREE.SpotLight( "red", 4.2, 0.5, Math.PI / 6, 0.6)
@@ -326,11 +325,12 @@ for (let i = 0; i < count; i++) {
 snowGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
 const snowMaterial = new THREE.PointsMaterial({
-  color: 0xffffff,
-  size: 0.3,
-  transparent: true,
-  sizeAttenuation: true,
+	color: 0xffffff,
+	size: 0.3,
+	transparent: true,
+	sizeAttenuation: true,
 })
+
 
 const snow = new THREE.Points(snowGeometry, snowMaterial);
 scene.add(snow)
@@ -383,9 +383,9 @@ const saySentence = (text) => {
 }
 
 
-//saySentence(text.guide)
+saySentence(text.guide)
 
-const newLight = new THREE.SpotLight(0xffffff, 0.4)
+
 
 setTimeout(() => { scene.remove(pingwinGuide) }, 55000)
 
@@ -557,9 +557,9 @@ tick()
 
 
 // GUI
-/*
-const gui = new GUI()
 
+const gui = new GUI()
+/*
 const cameraTweaks = gui.addFolder('Caméra')
 cameraTweaks.add(camera.position, 'x').min(-60).max(60).step(0.1).name('X Position')
 cameraTweaks.add(camera.position, 'z').min(-40).max(40).step(0.1).name('Z Position')
@@ -573,7 +573,6 @@ lightTweaks.add(directionalLight.position, 'y').min(-30).max(30).step(0.001).nam
 lightTweaks.add(directionalLight.position, 'z').min(-30).max(30).step(0.001).name('z')
 
 gui.hide()
-
 */
 
 // PWA Full-Screen
@@ -594,3 +593,14 @@ function goFullScreen() {
 canvas.addEventListener('click', () => {
   	goFullScreen()
 })
+
+const newLight = new THREE.SpotLight(0xffffff, 5, 7, Math.PI / 4, 0.2)
+newLight.position.set(1, 9.5, 3.9)
+scene.add(newLight)
+
+newLight.target.position.set(1, 6, 3)
+scene.add(newLight.target)
+
+gui.add(newLight.position, 'x').min(-10).max(10).step(0.1).name('x')
+gui.add(newLight.position, 'y').min(-10).max(10).step(0.1).name('y')
+gui.add(newLight.position, 'z').min(-10).max(10).step(0.1).name('z')
