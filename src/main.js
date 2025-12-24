@@ -67,26 +67,71 @@ gltfLoader.load(
 
 gltfLoader.load(
     '/models/ugly_gnome_max.glb',
-    (gltf) =>  gnomeModel = gltf.scene
+    (gltf) =>  {
+		gnomeModel = gltf.scene
+		gnomeModel.scale.set(0.25, 0.25, 0.25)
+		
+		const sisterGnome = gnomeModel.clone()
+		sisterGnome.position.set(13, 4.3, 7.9)
+		sisterGnome.rotateY(180)
+		
+		const meGnome = gnomeModel.clone()
+		meGnome.position.set(-9, 4.3, -1.2)
+		meGnome.rotateY(3)
+		
+		const candiGnome = gnomeModel.clone()
+		candiGnome.position.set(-23, 4.3, -3.9)
+
+		const camiGnome = gnomeModel.clone()
+		camiGnome.position.set(-23, 4.3, -4.7)
+
+		const grannyGnome = gnomeModel.clone()
+		grannyGnome.position.set(6.4, 4.3, -23)
+		grannyGnome.rotateY(180)
+
+		const girlfriendGnome = gnomeModel.clone()
+		girlfriendGnome.position.set(-24, 4.3, 8)
+		girlfriendGnome.rotateY(12)
+
+		const momGnome = gnomeModel.clone()
+		momGnome.position.set(-7.1, 4.3, 23.5)
+		momGnome.rotateY(33)
+
+		const dadGnome = gnomeModel.clone()
+		dadGnome.position.set(-7.9, 4.3, 23.7)
+		dadGnome.scale.set(0.3, 0.3, 0.3)
+		dadGnome.rotateY(33)
+
+		const auntGnome = gnomeModel.clone()
+		auntGnome.position.set(-4, 4.3, -23)
+		auntGnome.rotateY(180)
+
+		const uncleGnome = gnomeModel.clone()
+		uncleGnome.position.set(-5, 4.3, -23)
+		uncleGnome.rotateY(180)
+	
+		scene.add(sisterGnome, meGnome, girlfriendGnome, momGnome, dadGnome, grannyGnome, auntGnome, uncleGnome, candiGnome, camiGnome)
+				
+		gui.add(meGnome.rotation, 'y').min(0).max(360).step(1).name('angle max')
+		gui.add(candiGnome.rotation, 'y').min(0).max(360).step(1).name('angle candice')
+		gui.add(candiGnome.position, 'x').min(-30).max(360).step(0.01).name('x')
+		gui.add(candiGnome.position, 'z').min(-30).max(360).step(1).name('z')
+
+		/*
+		const sisterGnome = gnomeModel.clone()
+		sisterGnome.position.set(13, 4.3, 7.9)
+		sisterGnome.rotateY(180)
+		scene.add(sisterGnome)
+		
+		const sisterGnome = gnomeModel.clone()
+		sisterGnome.position.set(13, 4.3, 7.9)
+		sisterGnome.rotateY(180)
+		scene.add(sisterGnome)
+*/
+
+	}
+
 )
-
-const gnomes = []
-
-if(gnomeModel) {
-	console.log(gnomeModel)
-for (let i = 0; i < 8; i++) {
-  const gnome = gnomeModel.clone();
-  gnome.position.set(
-    Math.random() * 10 - 5,  // x
-    0,                        // y
-    Math.random() * 10 - 5   // z
-  );
-  scene.add(gnome);
-  gnomes.push(gnome);
-}
-}
-
-
 
 
 // Player
@@ -366,7 +411,7 @@ const hasPlayedScene = {
 		status:false
 	},
 	girlfriendGnome: {
-		positions: { x: -24.5, y: 5.5, z: 17.4 },
+		positions: { x: -24, y: 4.5, z: 8 },
 		status:false
 	},
 	sisterGnome: {
@@ -494,6 +539,7 @@ lightTweaks.add(directionalLight, 'intensity').min(0).max(10).step(0.01).name('L
 lightTweaks.add(directionalLight.position, 'x').min(-30).max(30).step(0.001).name('x')
 lightTweaks.add(directionalLight.position, 'y').min(-30).max(30).step(0.001).name('y')
 lightTweaks.add(directionalLight.position, 'z').min(-30).max(30).step(0.001).name('z')
+
 
 //gui.hide()
 
