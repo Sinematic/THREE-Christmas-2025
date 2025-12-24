@@ -186,20 +186,12 @@ const isInsideAllowedZone = (pos) => {
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
 scene.add(ambientLight)
 
-const light = new THREE.SpotLight( "red", 4.2, 0.5, Math.PI / 6, 0.6)
-light.position.set(3.55, 12.2, 6.4)
-scene.add(light)
+const bluntLight = new THREE.SpotLight( "red", 4.2, 0.5, Math.PI / 6, 0.6)
+bluntLight.position.set(3.55, 12.2, 6.4)
+scene.add(bluntLight)
 
-light.target.position.set(3.55, 12.2, 5.7);
-scene.add(light.target)
-
-// const addLampLight = (x, y, z) => {
-// 	const pointLight = new THREE.PointLight(0xebab34, 4.5, 9, Math.PI * 0.1, 0.25, 1)
-// 	pointLight.position.set(x, y, z)
-// 	pointLight.castShadow = false
-// 	pointLight.visible = camera.position.distanceTo(player.position) < 15;
-// 	scene.add(pointLight)
-// }
+bluntLight.target.position.set(3.55, 12.2, 5.7);
+scene.add(bluntLight.target)
 
 new THREE.PointLight
 
@@ -208,7 +200,6 @@ const addLampLight = (x, y, z) => {
 	spotLight.position.set(x, y, z)
 	spotLight.castShadow = false
 	spotLight.target.position.set(x, y - 3, z)
-	//spotLight.visible = camera.position.distanceTo(player.position) < 15
 	scene.add(spotLight)
 }
 
@@ -245,7 +236,7 @@ scene.add(skybox)
 
 
 // Snow
-const count = 0 //1000;
+const count = 1000
 const snowGeometry = new THREE.BufferGeometry();
 const positions = [];
 const offsetsX = [];
