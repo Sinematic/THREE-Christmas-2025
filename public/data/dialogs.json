@@ -1,34 +1,51 @@
 {
     "gettingStarted": {
-        "loaded" : "GUIDE : Il fait drôlement sombre... Attends je vais arranger ça !",
-        "guide" : [
-            "GUIDE : Bonjour ? Tu m'écoutes ? HÉ HO, PAR LÀ DUCON !", 
-            "GUIDE : Ah ! Bonjour cher visiteur, ravi de te voir !",
-            "GUIDE : On va pouvoir commencer. Bienvenue au village du Père Noël",
-            "GUIDE : Tu connais sûrement les lapins crétins, eh bien ici, tu verras que le problème vient des pingouins",
-            "GUIDE : Non pas moi, eux je dois me les coltiner toute l'année !",
-            "GUIDE : Enfin bref, tu vois sûrement deux cercles blancs, à gauche et à droite.",
-            "GUIDE : Si tu déplaces le cercle à gauche, tu vas retrouver l'usage de tes jambes",
-            "GUIDE : Si tu déplaces le cercle à droite, tu devrais pouvoir tourner la tête",
-            "GUIDE : Bon, maintenant que c'est fait, je dois y aller, le devoir m'appelle !"
+        "loaded": "GUIDE: Il fait drôlement sombre... Attends je vais arranger ça !",
+        "guide": [
+            "GUIDE: Bonjour ? Tu m'écoutes ? HÉ HO, PAR LÀ DUCON !", 
+            "GUIDE: Ah ! Bonjour cher visiteur, ravi de te voir !",
+            "GUIDE: On va pouvoir commencer. Bienvenue au village du Père Noël",
+            "GUIDE: Tu connais sûrement les lapins crétins, eh bien ici, tu verras que le problème vient des pingouins",
+            "GUIDE: Non pas moi, eux je dois me les coltiner toute l'année !",
+            "GUIDE: Enfin bref, tu vois sûrement deux cercles blancs, à gauche et à droite.",
+            "GUIDE: Si tu déplaces le cercle à gauche, tu vas retrouver l'usage de tes jambes",
+            "GUIDE: Si tu déplaces le cercle à droite, tu devrais pouvoir tourner la tête",
+            "GUIDE: Bon, maintenant que c'est fait, je dois y aller, le devoir m'appelle !"
         ]
     },
     "dialogs": {
-        "snowman" : "Les bonhommes de neige normaux ils ont droit à une carotte, pourquoi moi j'ai un nez poireau ?",
-        "gnomes" : {
-            "cousinsGnomes" : [ 
-                "CANDILUTIN : Hmm, elles sont bonnes ces dragées, c'est quoi ?", 
-                "CAMILUTIN : Mais Candilutin, t'es dégueu, tu manges les crottes du renne !"
+        "snowman": [
+            "BONHOMME DE NEIGE: Les bonhommes de neige normaux ils ont droit à une carotte...", 
+            "pourquoi moi j'ai un nez poireau ? Le créateur a été radin ?!"
+        ],
+        "gnomes": {
+            "cousinsGnomes": [ 
+                "CANDILUTIN: Hmm, elles sont bonnes ces dragées, c'est quoi ?", 
+                "CAMILUTIN: Mais Candilutin, t'es dégueu, tu manges les crottes du renne !"
             ],
-            "grannyGnome" : "MÉMÉLUTIN : Quels emmerdeurs ces pingouins, mais bon, le pingouin ça se mange sans faim !",
-            "parensGnomes" : [
-                "",
-                ""
-            ]
+            "auntAndUncleGnome": "*bruits de rires*",
+            "grannyGnome": "MÉMÉLUTIN: Quels emmerdeurs ces pingouins, mais bon, le pingouin ça se mange sans faim !",
+            "parensGnomes": [
+                "BRUNOLUTIN: Je suis pas sûr qu'on a bien fait de venir Sandrilutin",
+                "SANDRILUTIN: "
+            ],
+            "meGnome": "MAXILUTIN: Veni...Vidi...Devci... 😎",
+            "girlfriendGnome": "AURÉLUTIN: Je crois que je vais passer mon tour pour m'occuper des pingouins",
+            "sisterGnome": "NANALUTIN: Les pingouins ont pris tout mon thé pour colorer l'eau de leur bain..."
         },
-        "pengwins" : {
-            "roof" : "On dirait qu'un pingouin a chuté dans la poubelle",
-            "singers" : "Jingle Bells, Jingle Bells ... c'est quoi après déjà ?"
+        "pengwins": {
+            "roof": "On dirait qu'un pingouin a chuté dans la poubelle. Ils ont l'air complètement allumés par ici",
+            "singers": "PINGOUIN: Jingle Bells, Jingle Bells ... c'est quoi après déjà ?",
+            "sweater": "PINGOUIN: T'as vu mon pull, il est beau hein ?!",
+            "yakuza": [
+                "PINGOUIN YAKUZA : Si je reste avec eux une minute de plus, je leur colle une beigne...", 
+                "enfin, je leur en collerai une, si j'avais des bras !"
+            ]
         }
+    },
+    "easterEggs": {
+        "noFeet": "Putain j'ai pas de corps ? Je suis sûrement l'esprit de Noël !",
+        "starrySky": "Ton étoile brillera pour toujours EMMYLUTIN",
+        "suspiciousGift": "Mieux vaut ne pas savoir ce qu'il y a dedans..."
     }
 }

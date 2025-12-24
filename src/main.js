@@ -14,7 +14,10 @@ let textDiv = document.getElementById("dialogs")
 
 const saySentence = (text) => {
     textDiv.innerText = text
-	setTimeout(() => { textDiv.innerText = "" }, 5000)
+	setTimeout(() => { 
+		textDiv.innerText = ""
+		playingDialogs = false 
+	}, 5000)
 }
 saySentence(text.gettingStarted.loaded)
 
@@ -69,7 +72,8 @@ gltfLoader.load(
 
 // Player
 const player = new THREE.Object3D()
-player.position.set(24, 6.7, 19)
+player.position.set(15, 5, 15)
+//player.position.set(24, 6.7, 19)
 scene.add(player)
 
 camera.position.set(0, 0, 0)
@@ -230,11 +234,9 @@ const materials = [
 const skybox = new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), materials)
 scene.add(skybox)
 
-// Snow
 
-// Points
-// Nombre de flocons
-const count = 1000;
+// Snow
+const count = 0 //1000;
 const snowGeometry = new THREE.BufferGeometry();
 const positions = [];
 const offsetsX = [];
@@ -257,31 +259,83 @@ const snowMaterial = new THREE.PointsMaterial({
   size: 0.3,
   transparent: true,
   sizeAttenuation: true,
-});
+})
 
 const snow = new THREE.Points(snowGeometry, snowMaterial);
-scene.add(snow);
+scene.add(snow)
 
-// --- Animation ---
 const animateSnow = () => {
-	const pos = snowGeometry.attributes.position.array;
-	const t = performance.now() * 0.001; // temps global qui varie à chaque frame
+	const pos = snowGeometry.attributes.position.array
+	const t = performance.now() * 0.001
 
 	for (let i = 1, j = 0; i < pos.length; i += 3, j++) {
-		pos[i] -= 0.02 + Math.random() * 0.02;               // chute verticale
-		pos[i-2] += Math.sin(t + offsetsX[j]) * 0.01;       // oscillation X
-		pos[i-0] += Math.cos(t + offsetsZ[j]) * 0.01;       // oscillation Z
+		pos[i] -= 0.02 + Math.random() * 0.02               // chute verticale
+		pos[i-2] += Math.sin(t + offsetsX[j]) * 0.01       // oscillation X
+		pos[i-0] += Math.cos(t + offsetsZ[j]) * 0.01       // oscillation Z
 
 		if (pos[i] < 0) pos[i] = 40;                        // remise en haut
 	}
 
-	snowGeometry.attributes.position.needsUpdate = true;
+	snowGeometry.attributes.position.needsUpdate = true
 }
 
+
+// Detection for dialogs
+const playingDialogs = false
+
+const hasPlayedScene = {
+	init: false,
+	guide: false,
+	roofPengwins: false,
+	snowman: false,
+	drunkPengwin: false,
+	singerPengwins: false,
+	christmasChoir: false,
+	sweaterPengwin: false,
+	cousinsGnomes: false,
+	auntAndUngleGnomes: false,
+	grannyGnome: false,
+	parensGnomes: false,
+	meGnome: false,
+	girlfriendGnome: false,
+	sisterGnome: false,
+	happyNormalPengwin: false,
+	yakuzaPengwin: false,
+	noFeet: false,
+	starrySky: false,
+	suspiciousGift: false
+}
+
+const checkDialogs = () => {
+
+	for (const d of dialogs) {
+		const dx = player.position.x - d.position.x;
+		const dz = player.position.z - d.position.z;
+
+		if (dx * dx + dz * dz > d.radius * d.radius) continue;
+
+		dirToTarget
+		.subVectors(d.position, camera.position)
+		.normalize();
+
+		camera.getWorldDirection(cameraDir);
+
+		if (cameraDir.angleTo(dirToTarget) < d.maxAngle) {
+			saySentence(d);
+			return;
+		}
+  	}
+
+}
+
+/*
+
+*/
 
 // Animation function
 const clock = new THREE.Clock()
 let previousTime = 0
+let lastCheck = 0
 
 const tick = () =>
 {
@@ -297,6 +351,11 @@ const tick = () =>
 
     player.rotation.y = yaw
     camera.rotation.x = pitch
+
+	if(previousTime - lastCheck > 0.2) {
+		checkDialogs()
+		lastCheck = previousTime
+	}
 
     updateMovement()
 	animateSnow()
@@ -324,16 +383,16 @@ lightTweaks.add(pointLight.position, 'x').min(-30).max(30).step(0.001).name('x')
 lightTweaks.add(pointLight.position, 'y').min(-30).max(30).step(0.001).name('y')
 lightTweaks.add(pointLight.position, 'z').min(-30).max(30).step(0.001).name('z')
 
-gui.hide()
+//gui.hide()
 
 
 // PWA Full-Screen
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('Service Worker registered', reg))
-      .catch(err => console.error('SW registration failed', err))
-  })
+	window.addEventListener('load', () => {
+		navigator.serviceWorker.register('/sw.js')
+		.then(reg => console.log('Service Worker registered', reg))
+		.catch(err => console.error('SW registration failed', err))
+	})
 }
 
 function goFullScreen() {
