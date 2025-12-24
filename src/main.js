@@ -281,7 +281,7 @@ const animateSnow = () => {
 
 
 // Detection for dialogs
-const playingDialogs = false
+let playingDialogs = false
 
 const hasPlayedScene = {
 	init: false,
@@ -307,7 +307,9 @@ const hasPlayedScene = {
 }
 
 const checkDialogs = () => {
-
+	const dirToTarget = new THREE.Vector3();
+	const cameraDir = new THREE.Vector3();
+/*
 	for (const d of dialogs) {
 		const dx = player.position.x - d.position.x;
 		const dz = player.position.z - d.position.z;
@@ -325,6 +327,7 @@ const checkDialogs = () => {
 			return;
 		}
   	}
+		*/
 
 }
 
