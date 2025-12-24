@@ -194,7 +194,7 @@ const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.2)
 scene.add(pointLightHelper)
 */
 const addLampLight = (x, y, z) => {
-	const pointLight = new THREE.PointLight(0xebab34, 4.5, 12, Math.PI * 0.1, 0.25, 1)
+	const pointLight = new THREE.PointLight(0xebab34, 4.5, 9, Math.PI * 0.1, 0.25, 1)
 	pointLight.position.set(x, y, z)
 	scene.add(pointLight)
 }
@@ -210,14 +210,11 @@ const lampsPositions = [
 	{ x: -24.5, y: 10.6, z: -16.4 },
 ]
 
-//for(let lamp of lampsPositions) addLampLight(lamp.x, lamp.y, lamp.z)
+for(let lamp of lampsPositions) addLampLight(lamp.x, lamp.y, lamp.z)
 
+// Sky & Fog
 scene.fog = new THREE.FogExp2(0x0b1d2a, 0.02)
-//scene.background = new THREE.Color(0x0b1d2a)
 
-
-
-// Sky
 const loader = new THREE.TextureLoader()
 const texture = loader.load('/images/night-sky.jpg')
 
